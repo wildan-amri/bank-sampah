@@ -1,37 +1,50 @@
 import axios from "axios";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-export interface RegisterMakerPayload {
-  email: string;
-  password: string;
-  namaSiswa: string;
-  kelas: string;
-  namaApp: string;
-}
+import { api, API_BASE_URL } from "@/lib/api";
+import { ApiResponse } from "@/types/api";
+import {
+  RegisterMakerDto,
+  LoginMakerDto,
+  MakerData,
+} from "@/types/auth";
 
 export async function registerMaker(
-  payload: RegisterMakerPayload
-) {
+  payload: RegisterMakerDto
+): Promise<ApiResponse<MakerData>> {
   const response = await axios.post(
-    `${API_URL}/api/v1/maker/register`,
+    `${API_BASE_URL}/api/v1/maker/register`,
     payload
   );
-
   return response.data;
 }
 
 export async function loginMaker(
-  email: string,
-  password: string
-) {
+  payload: LoginMakerDto
+): Promise<ApiResponse<MakerData>> {
   const response = await axios.post(
-    `${API_URL}/api/v1/maker/login`,
+    `${API_BASE_URL}/api/v1/maker/login`,
+    payload
+  );
+  return response.data;
+}
+
+export async function getMakerProfile(): Promise<ApiResponse<MakerData>> {
+  const response = await api.get("/api/v1/maker/profile");
+  return response.data;
+}
+
+export async function checkMakerKey(
+  email: string
+): Promise<ApiResponse<{ email: string; namaSiswa: string; namaApp: string; appKey: string }>> {
+  const response = await axios.get(
+    `${API_BASE_URL}/api/v1/maker/check-key`,
     {
-      email,
-      password,
+      params: { email },
     }
   );
+  return response.data;
+}
 
+export async function seedDummyData(): Promise<ApiResponse<any>> {
+  const response = await api.post("/api/v1/seed");
   return response.data;
 }
