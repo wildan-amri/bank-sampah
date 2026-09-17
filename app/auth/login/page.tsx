@@ -8,12 +8,11 @@ import { loginUser } from "@/services/auth.service";
 import { getAppKey, saveAuth } from "@/lib/auth";
 import { LoginUserDto } from "@/types/auth";
 import toast from "react-hot-toast";
-import { LogIn, KeyRound, AlertCircle, ShieldCheck, User, ArrowRight } from "lucide-react";
+import { LogIn, ShieldCheck, User } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [hasAppKey, setHasAppKey] = useState(true);
 
   const {
     register,
@@ -22,15 +21,10 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<LoginUserDto>();
 
-  useEffect(() => {
-    const key = getAppKey();
-    setHasAppKey(!!key);
-  }, []);
-
   async function onSubmit(data: LoginUserDto) {
     const key = getAppKey();
     if (!key) {
-      toast.error("App Key belum dikonfigurasi! Harap pasang App Key terlebih dahulu.");
+      toast.error("Koneksi ke server belum siap. Silakan muat ulang halaman.");
       return;
     }
 
@@ -75,24 +69,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Warning if no App Key */}
-        {!hasAppKey && (
-          <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-start gap-2.5">
-            <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold">App Key Belum Dipasang!</p>
-              <p className="mt-0.5 text-amber-700">
-                Aplikasi memerlukan App Key untuk menghubungi server. Silakan hubungkan App Key Anda.
-              </p>
-              <Link
-                href="/maker/register"
-                className="mt-2 inline-flex items-center gap-1 font-semibold text-amber-900 underline hover:no-underline"
-              >
-                Daftar Maker & Dapatkan Key <ArrowRight size={12} />
-              </Link>
-            </div>
-          </div>
-        )}
+        {/* Form */}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>

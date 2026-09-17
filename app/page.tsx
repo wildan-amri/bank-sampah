@@ -7,54 +7,29 @@ import {
   Recycle,
   ShieldCheck,
   User,
-  KeyRound,
   Database,
   ArrowRight,
   CheckCircle2,
   Sparkles,
   Award,
-  TrendingUp,
 } from "lucide-react";
-import { getAppKey, setAppKey, getToken, getRole } from "@/lib/auth";
+import { getToken, getRole } from "@/lib/auth";
 import { seedDummyData } from "@/services/maker.service";
 import toast from "react-hot-toast";
 
 export default function Home() {
   const router = useRouter();
-  const [currentAppKey, setCurrentAppKey] = useState<string | null>(null);
-  const [manualKey, setManualKey] = useState("");
-  const [showKeyInput, setShowKeyInput] = useState(false);
   const [isSeeding, setIsSeeding] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const key = getAppKey();
-    setCurrentAppKey(key);
     const token = getToken();
     setIsLoggedIn(!!token);
     setUserRole(getRole());
   }, []);
 
-  const handleSaveAppKey = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualKey.trim()) {
-      toast.error("Silakan masukkan App Key");
-      return;
-    }
-    setAppKey(manualKey.trim());
-    setCurrentAppKey(manualKey.trim());
-    setShowKeyInput(false);
-    toast.success("App Key berhasil disimpan!");
-  };
-
   const handleSeedData = async () => {
-    if (!currentAppKey) {
-      toast.error("Harap daftarkan atau masukkan App Key siswa terlebih dahulu!");
-      setShowKeyInput(true);
-      return;
-    }
-
     try {
       setIsSeeding(true);
       toast.loading("Membuat data awal (seed data)...", { id: "seed" });
@@ -127,83 +102,6 @@ export default function Home() {
 
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        {/* App Key Status Notification */}
-        <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 mt-0.5">
-              <KeyRound size={22} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-slate-800">Status Kunci Tenant Siswa (x-app-key)</h3>
-                {currentAppKey ? (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                    <CheckCircle2 size={12} /> Terhubung
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                    Belum Dikonfigurasi
-                  </span>
-                )}
-              </div>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                {currentAppKey ? (
-                  <span className="font-mono bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                    {currentAppKey}
-                  </span>
-                ) : (
-                  "Daftarkan akun App Maker atau masukkan App Key untuk mengakses database ujian Anda."
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 self-end md:self-auto">
-            <button
-              onClick={() => setShowKeyInput(!showKeyInput)}
-              className="text-xs px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium transition"
-            >
-              {showKeyInput ? "Tutup" : "Ganti / Pasang Key"}
-            </button>
-            <Link
-              href="/maker/register"
-              className="text-xs px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium transition"
-            >
-              Daftar App Maker
-            </Link>
-            <button
-              onClick={handleSeedData}
-              disabled={isSeeding}
-              className="text-xs inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold shadow-sm transition"
-            >
-              <Database size={14} />
-              {isSeeding ? "Seeding..." : "Inisialisasi Sample Data (1-Klik)"}
-            </button>
-          </div>
-        </div>
-
-        {/* Input Manual Key Form */}
-        {showKeyInput && (
-          <form
-            onSubmit={handleSaveAppKey}
-            className="mb-8 p-4 rounded-xl bg-slate-100 border border-slate-300 flex flex-col sm:flex-row gap-2 items-center"
-          >
-            <input
-              type="text"
-              placeholder="Masukkan App Key UUID (contoh: 97945213-34a7-48cf-baac-8740c1d18765)"
-              value={manualKey}
-              onChange={(e) => setManualKey(e.target.value)}
-              className="flex-1 w-full px-3 py-2 text-sm rounded-lg border border-slate-300 bg-white font-mono outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-            <button
-              type="submit"
-              className="w-full sm:w-auto px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition"
-            >
-              Simpan Key
-            </button>
-          </form>
-        )}
-
         {/* Main Banner */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/80 border border-emerald-200 text-emerald-800 text-xs font-semibold uppercase tracking-wider mb-4">
@@ -301,10 +199,20 @@ export default function Home() {
 
         {/* Demo Accounts Quick Guide */}
         <div className="mt-12 p-6 rounded-2xl bg-white/70 border border-slate-200/80 max-w-4xl mx-auto">
-          <h3 className="font-semibold text-slate-800 flex items-center gap-2 mb-3">
-            <Award className="text-amber-500" size={18} />
-            Panduan Akun Demo Ujian (Setelah Inisialisasi Sample Data)
-          </h3>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+              <Award className="text-amber-500" size={18} />
+              Panduan Akun Demo Ujian
+            </h3>
+            <button
+              onClick={handleSeedData}
+              disabled={isSeeding}
+              className="text-xs inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold shadow-xs transition self-start sm:self-auto cursor-pointer"
+            >
+              <Database size={13} />
+              {isSeeding ? "Memproses Data..." : "Inisialisasi Sample Data (1-Klik)"}
+            </button>
+          </div>
           <div className="grid sm:grid-cols-2 gap-4 text-xs sm:text-sm">
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <p className="font-medium text-slate-700">Akun Admin Bank Sampah:</p>

@@ -7,13 +7,12 @@ import {
   Phone,
   MapPin,
   Award,
-  KeyRound,
   LogOut,
   Sparkles,
 } from "lucide-react";
 import { getMe } from "@/services/auth.service";
 import { getNasabahDashboard } from "@/services/dashboard.service";
-import { getUser, getAppKey, logout, resetTenant, saveAuth, getToken, getRole } from "@/lib/auth";
+import { getUser, logout, saveAuth, getToken, getRole } from "@/lib/auth";
 import { UserAuthData, NasabahProfile } from "@/types/auth";
 import { formatPoin, getImageUrl } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -23,7 +22,6 @@ export default function NasabahProfilePage() {
   const [profile, setProfile] = useState<UserAuthData | null>(null);
   const [saldoPoin, setSaldoPoin] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-  const [appKey, setAppKey] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadProfile() {
@@ -87,25 +85,12 @@ export default function NasabahProfilePage() {
     }
 
     loadProfile();
-    setAppKey(getAppKey());
   }, []);
 
   const handleLogout = () => {
     logout();
     toast.success("Berhasil keluar.");
     router.push("/auth/login");
-  };
-
-  const handleResetTenant = () => {
-    if (
-      confirm(
-        "PERINGATAN: Mereset tenant akan menghapus App Key dan seluruh sesi browser ini. Lanjutkan?"
-      )
-    ) {
-      resetTenant();
-      toast.success("Tenant telah direset.");
-      router.push("/");
-    }
   };
 
   if (loading && !profile) {
@@ -223,34 +208,8 @@ export default function NasabahProfilePage() {
           </div>
         </div>
 
-        {/* Tenant Key Info */}
-        <div className="space-y-3 pt-3 border-t border-slate-100">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-            Kunci Tenant Sistem (x-app-key)
-          </h3>
-
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs text-slate-700 font-semibold flex items-center gap-1.5">
-                <KeyRound size={14} className="text-emerald-600" />
-                App Key Terhubung:
-              </p>
-              <p className="font-mono text-xs font-semibold text-slate-800 mt-1 select-all break-all">
-                {appKey || "Tidak ditemukan"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-          <button
-            onClick={handleResetTenant}
-            className="text-xs text-slate-500 hover:text-rose-600 font-medium underline cursor-pointer"
-          >
-            Reset App Key / Ganti Akun Siswa
-          </button>
-
+        {/* Logout */}
+        <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
           <button
             onClick={handleLogout}
             className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs transition flex items-center gap-1.5 shadow-sm cursor-pointer"

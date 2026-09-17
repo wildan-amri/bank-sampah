@@ -48,7 +48,7 @@ export default function RegisterPage() {
   const checkKey = () => {
     const key = getAppKey();
     if (!key) {
-      toast.error("App Key belum dikonfigurasi! Harap pasang App Key terlebih dahulu.");
+      toast.error("Koneksi ke server belum siap. Silakan muat ulang halaman.");
       return false;
     }
     return true;
